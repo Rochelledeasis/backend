@@ -1,8 +1,8 @@
-import mysql from 'mysql2/promise.js';
+import mysql from 'mysql2/promise';
 
-const pool = mysql.createPoolCluster({
+const pool = mysql.createPool({
   host: "localhost",
-  user: "admin",
+  user: "root",
   password: "",
   database: "Librarydb"
 })
