@@ -4,5 +4,7 @@ import express from 'express';
 const bookrouter = express.Router();
 
 bookrouter.get('/all', bookController.fetchAllBooks);
+bookrouter.post('/', bookController.createBook);
 
 export default bookrouter;
+
