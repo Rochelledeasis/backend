@@ -10,3 +10,7 @@ export const createbook = async (book) => {
     return bookId;
 };
 
+export const updateBook = async (book) => {
+    const updatedBook = await bookModel.update(book);
+    return updatedBook;
+}
