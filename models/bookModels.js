@@ -22,3 +22,12 @@ export const update = async (book) => {
     
 }
 
+//delete
+export const deleteBook = async (id) => {
+    const [result] = await pool.query(
+        "DELETE FROM book WHERE id = ?",
+        [id]
+      );
+      return result.affectedRows;
+    
+} 
