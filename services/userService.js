@@ -28,6 +28,7 @@ export const createAccount = async (user) => {
     }
 
     const existing = await doesUserExist(user.email);
+    
     if(existing.result){
         throw new ValidationError(400, ' An account with that email already exists!');
     }
