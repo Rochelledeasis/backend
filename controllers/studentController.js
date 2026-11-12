@@ -1,62 +1,96 @@
-import * as studentService from '../services/studentService.js';
+import * as studentService from  '../services/studentService.js';
 
-export const fetchAllStudents = async (req, res) => {
-    const students = await studentService.fetchAllStudents();
+const SRCODE_REGEX = /^\d{2}-\d{5}$/;
+
+export const fetchAllstudents = async (req, res) =>{
+    const students =await studentService.fetchAllstudents();
     res.status(200).json(students);
-    
 };
 
-export const createStudents = async (req, res) => {
+//create
+export const createstudents = async (req, res) => {
     const {name, srcode, program} = req.body;
-    const students = {name, srcode, program};
-    
+
+    if (!name || !srcode || !program) {
+        return res.status(400).json({
+            success: false,
+            error: "name, srcode and program are required"
+        });
+    }
+
+    if (!SRCODE_REGEX.test(String(srcode).trim())) {
+        return res.status(400).json({
+            success: false,
+            error: "Invalid SR code. Use the format 24-12345"
+        });
+    }
+
+    const students = {name, srcode: String(srcode).trim(), program};
+
     try{
-        const studentId = await studentService.createStudents(students);
+        const studentsId = await studentService.createstudents(students);
         res.status(200).json({
             success: true,
-            message: studentId
+            message: studentsId
         });
-
     }catch(e){
         console.log(e);
-        res.status(e.statusCode).json({
-            error: e.message
+        res.status(e.status || 500).json({
+            error: e.status ? e.message : "Internal Server Error"
         });
     }
 }
 
-export const editStudents = async (req, res) => {
+//editstudents
+export const editstudents = async (req, res) => {
     const {name, srcode, program} = req.body;
-    const {id} = req.params;
-    const student = {id: parseInt(id), name, srcode, program};
+    const { id } = req.params;
+
+    if (!name || !srcode || !program) {
+        return res.status(400).json({
+            success: false,
+            error: "name, srcode and program are required"
+        });
+    }
+
+    if (!SRCODE_REGEX.test(String(srcode).trim())) {
+        return res.status(400).json({
+            success: false,
+            error: "Invalid SR code. Use the format 24-14728"
+        });
+    }
+
+    const students = {id: parseInt(id), name, srcode: String(srcode).trim(), program};
 
     try{
-        const updatedStudent = await studentService.updateStudent(student);
+        const updatedstudents = await studentService.updatestudents(students);
         res.status(200).json({
             success: true,
-            message: updatedStudent 
+            message: updatedstudents
         });
     }catch(e){
         console.log(e);
-        res.status(e.statusCode).json({
-            error: e.message
+        res.status(e.status || 500).json({
+            error: e.status ? e.message : "Internal Server Error"
         });
     }
 }
 
-export const deleteStudents = async (req, res) => {
-    const {id} = req.params;
+
+//delete
+export const deletestudents = async (req, res) => {
+    const { id } = req.params;
+   
     try{
-        const deletedStudent = await studentService.deleteStudent(parseInt(id));
+        const deletedstudents = await studentService.deletestudents(parseInt(id));
         res.status(200).json({
             success: true,
-            message: deletedStudent
+            message: deletedstudents
         });
-   }catch(e){
+    }catch(e){
         console.log(e);
-        res.status(e.statusCode).json({
-            error: e.message
+        res.status(e.status || 404).json({
+            error: e.status ? e.message : "Student does not exist!"
         });
     }
-
-}   
+}

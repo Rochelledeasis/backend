@@ -1,59 +1,44 @@
 import * as studentModels from '../models/studentModels.js';
+import ValidationError from '../utils/ValidationError.js';
 
-export const fetchAllStudents = async () => {
-    const students = await studentModels.fetchAllStudents();
-    return students;
+
+export const fetchAllstudents = async () => {
+   const students = await studentModels.fetchAllstudents();
+  return students;
 };
 
-const doesStudentExist = async (student) =>{
-    let existing;
-    if(Object.hasOwn(student, "id")){
-        existing = await studentModels.findStudentById(student.id);
-    }else{
-        existing = await studentModels.findStudentByNameAndAuthor(student);
-    }
+//insert
+export const createstudents = async (students) => {
+  if (await studentModels.findBySrcode(students.srcode)) {
+    const err = new Error("SR code already exists");
+    err.status = 409;
+    throw err;
+  }
 
-    if(existing.length > 0){
-        return true;
-    }
-    return false;
+  const studentsId = await studentModels.insert(students);
+  return studentsId;
 }
 
-export const createStudents = async (student) => {
-     if(!student.name || !student.srcode || !student.program){
-        throw new ValidationError(404, "All fields are required");
-    }
-    
-    const existing = await doesStudentExist(student);
-    
-    if(existing){
-        throw new ValidationError(409, 'Student already exists!');
-    }
-    const studentId = await studentModels.insert(student);
-    return studentId;
-};
+//update
+export const updatestudents = async (students) => {
+  if (await studentModels.findBySrcode(students.srcode, students.id)) {
+    const err = new Error("SR code already exists");
+    err.status = 409;
+    throw err;
+  }
 
-export const updateStudent = async (student) => {
-    if(!student.name || !student.srcode || !student.program){
-        throw new ValidationError(404, "All fields are required");
-    }
-    
-    const existing = await doesStudentExist(student);
-    
-    if(!existing){
-        throw new ValidationError(404, 'does not exists!');
-    }
-    const updatedStudent = await studentModels.update(student);
-    return updatedStudent;
+  const updatedstudents = await studentModels.update(students);
+  return updatedstudents;
 }
 
-export const deleteStudent = async (id) => {
-    const existing = await doesStudentExist(id);
-    
-    if(!existing){
-        throw new ValidationError(404, 'does not exists!');
-    }
+//delete
+export const deletestudents = async (id) => {
+  const existing = await studentModels.findById(id);
 
-    const deletedStudent = await studentModels.deleteStudent(id);
-    return deletedStudent;
-}   
+  if (!existing) {
+    throw new ValidationError(404, 'Student does not exist!');
+  }
+
+  const deletedstudents = await studentModels.remove(id);
+  return deletedstudents;
+}

@@ -1,47 +1,33 @@
 import pool from '../config/db.js';
 
-export const fetchAllStudents = async () => {
-  const [rows] = await pool.query('SELECT * FROM student');
+export const fetchAllstudents = async () => {
+  const [rows] = await pool.query('SELECT * FROM students');
   return rows;
 };
 
-export const findStudentByNameAndAuthor = async (student) => {
-  const [rows] = await pool.query("SELECT * FROM student WHERE name = ? AND srcode = ? AND program = ?", 
-    [student.name, student.srcode, student.program]);
-  return rows;
-};
-
-export const findStudentById = async (id) => {
-  const [rows] = await pool.query("SELECT * FROM student WHERE id = ?", 
-    [id]);
-  return rows;
-};
-
-export const insert = async (student) => {
-    const [result] = await pool.query(
-        "INSERT INTO student(name, srcode, program) VALUES (?, ?, ?)",
-        [student.name, student.srcode, student.program]);
+//insert
+export const insert = async (students) =>{
+  const[result] = await pool.query(
+    "INSERT INTO students (name,srcode, program) VALUES (?,?,?)",
+    [students.name, students.srcode, students.program]
+  );
 
 return result.insertId;
-    
 }
 
 //update
-export const update = async (student) => {
-    const [result] = await pool.query(
-        "UPDATE student SET name = ?, srcode = ?, program = ? WHERE id = ?",
-        [student.name, student.srcode, student.program, student.id]
-      );
-      return result.affectedRows;
-    
+export const update = async (students) => {
+  const [result] = await pool.query (
+    "UPDATE students SET name= ?, srcode= ?, program= ? WHERE id= ?" ,
+    [students.name, students.srcode, students.program, students.id]
+  );
+  return result.affectedRows;
 }
 
 //delete
-export const deleteStudent = async (id) => {
-    const [result] = await pool.query(
-        "DELETE FROM student WHERE id = ?",
-        [id]
-      );
-      return result.affectedRows;
-    
-} 
+export const remove = async (id) => {
+  const [result] = await pool.query (
+    "DELETE FROM students WHERE id= ?", [id]
+  );
+  return result.affectedRows;
+}
